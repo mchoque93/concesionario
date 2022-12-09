@@ -11,25 +11,36 @@ class Estado(IntEnum):
 @dataclass
 class Coche:
     id: int = field(init=False)
-    matricula: str
-    modelo: str
     estado: int
+    matricula: str
+    precio: float
+    modelo: "Modelo"
+
+@dataclass
+class Modelo:
+    id: int = field(init=False)
+    nombre: str
+    marca: str
 
 @dataclass
 class Transaccion:
     id: int = field(init=False)
-    coche: str
+    coche: "Coche"
+    cliente: "Cliente"
+    importe_abonado: float
 
 @dataclass
 class Cliente:
     id: int = field(init=False)
     importe_disponible: int
-    transaccion: List["Transaccion"] = field(default_factory=list) #1 cliente puede tener varias transicciones
+    nombre: str
+    transacciones: List["Transaccion"]
+    peticiones: List["Peticion"]
 
 @dataclass
 class Peticion:
     id: int = field(init=False)
-    cliente: str #1 peticion es de 1 cliente
-    coches: List["Coche"] = field(default_factory=list) #1 peticion puede ser de varios coches
+    cliente: "Cliente"
+    modelo: "Modelo"
 
 
