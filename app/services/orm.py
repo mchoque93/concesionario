@@ -3,8 +3,8 @@ from sqlalchemy import MetaData, Table, Column, Integer, String, ForeignKey, Flo
 from sqlalchemy.orm import mapper, relationship
 
 from app.models.models import Coche, Transaccion, Cliente, Peticion, Modelo
+from database import db
 
-db = SQLAlchemy()
 metadata = db.metadata
 
 coche = Table("coche",
@@ -25,7 +25,7 @@ transaccion = Table("transaccion",
                     metadata,
                     Column("id", Integer, primary_key=True, autoincrement=True),
                     Column("coche_id", String, ForeignKey("coche.id")),
-                    Column("cliente", String, ForeignKey("cliente.id")),
+                    Column("cliente_id", String, ForeignKey("cliente.id")),
                     Column("importe_abonado", Float),
                     )
 
@@ -38,8 +38,8 @@ cliente = Table("cliente",
 peticion = Table("peticion",
                  metadata,
                  Column("id", Integer, primary_key=True, autoincrement=True),
-                 Column("cliente", String), ForeignKey("cliente.id"),
-                 Column("modelo", String, ForeignKey("modelo.id"))
+                 Column("cliente_id", String, ForeignKey("cliente.id")),
+                 Column("modelo_id", String, ForeignKey("modelo.id"))
                  )
 
 def start_mappers():
