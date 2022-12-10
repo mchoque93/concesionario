@@ -2,8 +2,9 @@ import os
 
 from apiflask import APIFlask
 
-from app.services.orm import start_mappers
+from app.infrastructure.orm import start_mappers
 from database import db
+from app.api.resources import concesionario_v1_0_bp
 
 settings= os.getenv('APP_SETTINGS_MODULE')
 
@@ -25,7 +26,7 @@ def create_app(settings_module=settings):
     #app.url_map.strict_slashes = False
 
     # Registra los blueprints
-    #app.register_blueprint(pokemon_v1_0_bp)
+    app.register_blueprint(concesionario_v1_0_bp)
 
     # Registra manejadores de errores personalizados
     #register_error_handlers(app)

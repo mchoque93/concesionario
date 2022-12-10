@@ -1,7 +1,7 @@
 import pytest
 
 from app.infrastructure.sqlalchemy_repository import SQLRepository
-from app.models.models import Coche, Estado, Modelo
+from app.models.models import Coche, Estado, Modelo, Cliente
 
 
 class TestSQLRepository:
@@ -11,10 +11,10 @@ class TestSQLRepository:
 
     def test_add(self, repository, app):
         with app.app_context():
-            modelo1 = Modelo(nombre= "Megane", marca="Renault")
+            modelo1 = Modelo(nombre="Megane", marca="Renault")
             coche1 = Coche(estado=Estado.DISPONIBLE, matricula="51LKF", precio=20_000, modelo=modelo1)
             repository.add(coche1)
-            coches=repository.get_all(Coche)
+            coches = repository.get_all()
             assert coches == [coche1]
 
     def test_get_all(self, repository, app):
@@ -28,14 +28,12 @@ class TestSQLRepository:
             repository.add(coche2)
             repository.add(coche3)
 
-            assert len(repository.get_all(Coche)) == 3
-            assert repository.get_all(Coche) == [coche1, coche2, coche3]
+            assert len(repository.get_all()) == 3
+            assert repository.get_all() == [coche1, coche2, coche3]
 
     def test_get_by_id(self, repository, app):
         with app.app_context():
             modelo1 = Modelo(nombre="Megane", marca="Renault")
             coche1 = Coche(estado=Estado.DISPONIBLE, matricula="51LKF", precio=20_000, modelo=modelo1)
             repository.add(coche1)
-            assert repository.get_by_id(Coche, id=1) == coche1
-
-
+            assert repository.get_by_id(id=1) == coche1

@@ -34,8 +34,8 @@ class Cliente:
     id: int = field(init=False)
     importe_disponible: int
     nombre: str
-    transacciones: List["Transaccion"]
-    peticiones: List["Peticion"]
+    transacciones: List["Transaccion"] = field(default_factory=list)
+    peticiones: List["Peticion"] =field(default_factory=list)
 
 @dataclass
 class Peticion:
