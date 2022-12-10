@@ -48,17 +48,17 @@ def start_mappers():
 
     #coche
     coche_mapper = mapper(Coche, coche,
-                                properties={'modelo': relationship(modelo_mapper, backref="coche")})
+                                properties={'modelo': relationship(modelo_mapper)})
 
     #cliente
     cliente_mapper = mapper(Cliente, cliente)
 
     #transaccion
     transaccion_mapper = mapper(Transaccion, transaccion,
-                                properties={'coche': relationship(coche_mapper, backref="transaccion"),
-                                            'cliente': relationship(cliente_mapper, backref="transaccion")})
+                                properties={'coche': relationship(coche_mapper),
+                                            'cliente': relationship(cliente_mapper, backref="transacciones")})
 
     #peticion
     peticion_mapper = mapper(Peticion, peticion,
-                                properties={'modelo': relationship(modelo_mapper, backref="transaccion"),
-                                            'cliente': relationship(cliente_mapper, backref="transaccion")})
+                                properties={'modelo': relationship(modelo_mapper),
+                                            'cliente': relationship(cliente_mapper, backref="peticiones")})
