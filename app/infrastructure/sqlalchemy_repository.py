@@ -17,3 +17,7 @@ class SQLRepository(AbstractRepository):
     def add(self, object):
         db.session.add(object)
         db.session.commit()
+
+    def delete(self, object):
+        db.session.delete(object)
+        db.session.commit()

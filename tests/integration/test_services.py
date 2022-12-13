@@ -2,7 +2,10 @@ import pytest
 
 from app.infrastructure.sqlalchemy_repository import SQLRepository
 from app.models.models import Coche, Estado, Modelo, Cliente, Transaccion, Peticion
+from app.services import add_car_from_request
+from app.services.add_car_from_request import AddCarRequest
 from app.services.cliente_buy_car import BuyCar
+from app.services.register_car import RegisterCar
 from app.services.register_cliente import RegisterCliente
 from app.services.request_peticiones import RequestPeticion
 
@@ -30,8 +33,13 @@ class TestSQLServices:
         return SQLRepository(Modelo)
 
     @pytest.fixture
-    def service(self, repository):
-        return RegisterCliente(repository)
+    def service(self, repository_cliente):
+        return RegisterCliente(repository_cliente)
+
+    @pytest.fixture
+    def service_register_car(self, repository):
+        return RegisterCar(repository)
+
 
     @pytest.fixture
     def service_coche(self, repository, repository_cliente, repository_transaccion):
@@ -39,8 +47,13 @@ class TestSQLServices:
                       repositorio_transaccion=repository_transaccion)
 
     @pytest.fixture
-    def service_add_requests(self, repository_peticion, repository, repository_modelo):
-        return RequestPeticion(repositorio_peticion=repository_peticion, repositorio_cliente=repository, repositorio_modelo=repository_modelo)
+    def service_add_requests(self, repository_peticion, repository_cliente, repository_modelo):
+        return RequestPeticion(repositorio_peticion=repository_peticion, repositorio_cliente=repository_cliente, repositorio_modelo=repository_modelo)
+
+    @pytest.fixture
+    def service_add_car_request(self, repository_peticion, repository):
+        return AddCarRequest(repositorio_peticion=repository_peticion, repositorio_coche=repository)
+
 
     def test_register_cliente(self, repository_cliente, service, app):
         with app.app_context():
@@ -85,3 +98,14 @@ class TestSQLServices:
             assert len([peticion for peticion in repository_peticion.get_all() if
                         (modelo.id == modelo1.id) and (
                                 cliente.id == cliente.id)]) != 0
+
+    def test_request_peticion(self, service_register_car, repository_peticion, repository, service_add_car_request, app):
+        with app.app_context():
+            modelo1 = Modelo(nombre='aaa', marca='bbb')
+            cliente1 = Cliente(importe_disponible=100_000, nombre="Nilo")
+            peticion1 = Peticion(cliente=cliente1, modelo=modelo1)
+            repository_peticion.add(peticion1)
+
+            service_add_car_request.add_car_from_request(registercar=service_register_car, peticion_id=peticion1.id)
+            assert repository_peticion.get_by_id(id=peticion1.id) is None
+            assert len([coche for coche in repository.get_all() if coche.modelo.nombre==modelo1.nombre and coche.modelo.marca==modelo1.marca and coche.estado==Estado.DISPONIBLE])!=0
