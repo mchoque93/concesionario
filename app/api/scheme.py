@@ -26,7 +26,6 @@ class CocheSchema(Schema):
     modelo = fields.Nested(ModeloSchema)
 
 class BuyerSchema(Schema):
-    coche_id = fields.Integer(required=False)
     cliente_id = fields.Integer(required=False)
     importe_abonado = fields.Integer(required=False)
 

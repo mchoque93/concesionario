@@ -30,7 +30,7 @@ register_coche = RegisterCar(repository_coche)
 buy_car_service = BuyCar(repository_coche, repository, repository_transaccion)
 requests = RequestPeticion(repository_peticion, repository, repository_modelo)
 
-@concesionario_v1_0_bp.post("/")
+@concesionario_v1_0_bp.post("/customers")
 @concesionario_v1_0_bp.input(schema=InputClienteSchema)
 @concesionario_v1_0_bp.output(schema=ClienteSchema(many=True))
 def register_client(data):
@@ -41,7 +41,7 @@ def register_client(data):
     register_cliente.register_cliente(importe_disponible=data['importe_disponible'], nombre=data['nombre'])
 
 
-@concesionario_v1_0_bp.get("/")
+@concesionario_v1_0_bp.get("/customers")
 @concesionario_v1_0_bp.output(schema=ClienteSchema(many=True))
 def get_all():
     """
@@ -77,18 +77,18 @@ def get_all_coches():
     return result
 
 
-@concesionario_v1_0_bp.post("/cliente_buyer")
+@concesionario_v1_0_bp.post("/cars/<int:car_id>/buy")
 @concesionario_v1_0_bp.input(schema=BuyerSchema)
 @concesionario_v1_0_bp.output(schema=BuyerSchema(many=True))
-def buy_car(data):
+def buy_car(data, car_id):
     """
     Comprar un coche por un cliente
     :return:
     """
-    buy_car_service.buy_a_car(cliente_id=data['cliente_id'], coche_id=data['coche_id'],
+    buy_car_service.buy_a_car(cliente_id=data['cliente_id'], coche_id=car_id,
                              importe_abonado=data['importe_abonado'])
 
-@concesionario_v1_0_bp.post("/peticion_client")
+@concesionario_v1_0_bp.post("/requests")
 @concesionario_v1_0_bp.input(schema=PeticionSchema)
 @concesionario_v1_0_bp.output(schema=PeticionSchema(many=True))
 def peticion_cliente(data):
