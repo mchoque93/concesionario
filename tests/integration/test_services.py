@@ -40,7 +40,6 @@ class TestSQLServices:
     def service_register_car(self, repository):
         return RegisterCar(repository)
 
-
     @pytest.fixture
     def service_coche(self, repository, repository_cliente, repository_transaccion):
         return BuyCar(repositorio_coche=repository, repositorio_cliente=repository_cliente,
@@ -48,17 +47,17 @@ class TestSQLServices:
 
     @pytest.fixture
     def service_add_requests(self, repository_peticion, repository_cliente, repository_modelo):
-        return RequestPeticion(repositorio_peticion=repository_peticion, repositorio_cliente=repository_cliente, repositorio_modelo=repository_modelo)
+        return RequestPeticion(repositorio_peticion=repository_peticion, repositorio_cliente=repository_cliente,
+                               repositorio_modelo=repository_modelo)
 
     @pytest.fixture
-    def service_add_car_request(self, repository_peticion, repository):
-        return AddCarRequest(repositorio_peticion=repository_peticion, repositorio_coche=repository)
-
+    def service_add_car_request(self, repository_peticion, repository, service_register_car):
+        return AddCarRequest(repositorio_peticion=repository_peticion, repositorio_coche=repository, register_car=service_register_car)
 
     def test_register_cliente(self, repository_cliente, service, app):
         with app.app_context():
             cliente1 = Cliente(importe_disponible=100_000, nombre="Nilo")
-            service.register_cliente(importe_disponible=100_000, nombre="Nilo")
+            service(importe_disponible=100_000, nombre="Nilo")
             assert len([cliente for cliente in repository_cliente.get_all() if
                         (cliente.importe_disponible == cliente1.importe_disponible) and (
                                 cliente.nombre == cliente1.nombre)]) != 0
@@ -75,15 +74,15 @@ class TestSQLServices:
             coche = repository.get_by_id(id=coche1.id)
             cliente = repository_cliente.get_by_id(id=cliente1.id)
 
-            service_coche.buy_a_car(cliente_id=cliente1.id, coche_id=coche1.id, importe_abonado=100_000)
+            service_coche(cliente_id=cliente1.id, coche_id=coche1.id)
 
-            assert len([transaccion for transaccion in repository_transaccion.get_all() if
+            assert any([transaccion for transaccion in repository_transaccion.get_all() if
                         (transaccion.importe_abonado == 100_000) and (cliente.id == cliente1.id) and (
-                                coche.id == coche1.id)]) != 0
+                                coche.id == coche1.id)])
             assert repository.get_by_id(id=coche1.id).estado == Estado.VENDIDO
 
-
-    def test_register_peticion(self, repository_cliente, repository_peticion, repository_modelo, service_add_requests, app):
+    def test_register_peticion(self, repository_cliente, repository_peticion, repository_modelo, service_add_requests,
+                               app):
         with app.app_context():
             cliente1 = Cliente(importe_disponible=100_000, nombre="Nilo")
             modelo1 = Modelo(nombre='aaa', marca='bbb')
@@ -94,18 +93,20 @@ class TestSQLServices:
             modelo = repository_modelo.get_by_id(id=modelo1.id)
             cliente = repository_cliente.get_by_id(id=cliente1.id)
 
-            service_add_requests.add_peticion(modelo_id=modelo1.id, cliente_id=cliente1.id)
-            assert len([peticion for peticion in repository_peticion.get_all() if
+            service_add_requests(modelo_id=modelo1.id, cliente_id=cliente1.id)
+            assert any([peticion for peticion in repository_peticion.get_all() if
                         (modelo.id == modelo1.id) and (
-                                cliente.id == cliente.id)]) != 0
+                                cliente.id == cliente.id)])
 
-    def test_request_peticion(self, service_register_car, repository_peticion, repository, service_add_car_request, app):
+    def test_request_peticion(self, service_register_car, repository_peticion, repository, service_add_car_request,
+                              app):
         with app.app_context():
             modelo1 = Modelo(nombre='aaa', marca='bbb')
             cliente1 = Cliente(importe_disponible=100_000, nombre="Nilo")
             peticion1 = Peticion(cliente=cliente1, modelo=modelo1)
             repository_peticion.add(peticion1)
 
-            service_add_car_request.add_car_from_request(registercar=service_register_car, peticion_id=peticion1.id)
+            service_add_car_request(peticion_id=peticion1.id)
             assert repository_peticion.get_by_id(id=peticion1.id) is None
-            assert len([coche for coche in repository.get_all() if coche.modelo.nombre==modelo1.nombre and coche.modelo.marca==modelo1.marca and coche.estado==Estado.DISPONIBLE])!=0
+            assert any([coche for coche in repository.get_all() if
+                        coche.modelo.nombre == modelo1.nombre and coche.modelo.marca == modelo1.marca and coche.estado == Estado.DISPONIBLE])
