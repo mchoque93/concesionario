@@ -1,7 +1,7 @@
 import os
 
 from apiflask import APIBlueprint
-from flask import request, Blueprint
+from flask import request, Blueprint, Response
 from flask_restful import Api, Resource
 
 from app.api.scheme import ClienteSchema, InputClienteSchema, CocheSchema, BuyerSchema, TransaccionSchema, \
@@ -30,18 +30,18 @@ register_coche = RegisterCar(repository_coche)
 buy_car_service = BuyCar(repository_coche, repository, repository_transaccion)
 requests = RequestPeticion(repository_peticion, repository, repository_modelo)
 
-@concesionario_v1_0_bp.post("/")
+@concesionario_v1_0_bp.post("/customers")
 @concesionario_v1_0_bp.input(schema=InputClienteSchema)
-@concesionario_v1_0_bp.output(schema=ClienteSchema(many=True))
 def register_client(data):
     """
     Registrar cliente
     :return:
     """
     register_cliente.register_cliente(importe_disponible=data['importe_disponible'], nombre=data['nombre'])
+    return Response(None, status=201, mimetype='application/json')
 
 
-@concesionario_v1_0_bp.get("/")
+@concesionario_v1_0_bp.get("/customers")
 @concesionario_v1_0_bp.output(schema=ClienteSchema(many=True))
 def get_all():
     """
@@ -55,7 +55,6 @@ def get_all():
 
 @concesionario_v1_0_bp.post("/cars")
 @concesionario_v1_0_bp.input(schema=CocheSchema)
-@concesionario_v1_0_bp.output(schema=CocheSchema(many=True))
 def register_car(data):
     """
     Registrar coches
@@ -63,6 +62,7 @@ def register_car(data):
     """
     register_coche.register_car(estado=data['estado'], matricula=data['matricula'], precio=data['precio'],
                                 nombre=data['modelo']['nombre'], marca=data['modelo']['marca'])
+    return Response(None, status=201, mimetype='application/json')
 
 
 @concesionario_v1_0_bp.get("/cars")
@@ -77,26 +77,27 @@ def get_all_coches():
     return result
 
 
-@concesionario_v1_0_bp.post("/cliente_buyer")
+@concesionario_v1_0_bp.post("/cars/<int:car_id>/buy")
 @concesionario_v1_0_bp.input(schema=BuyerSchema)
-@concesionario_v1_0_bp.output(schema=BuyerSchema(many=True))
-def buy_car(data):
+def buy_car(data, car_id):
     """
     Comprar un coche por un cliente
     :return:
     """
-    buy_car_service.buy_a_car(cliente_id=data['cliente_id'], coche_id=data['coche_id'],
+    buy_car_service.buy_a_car(cliente_id=data['cliente_id'], coche_id=car_id,
                              importe_abonado=data['importe_abonado'])
 
-@concesionario_v1_0_bp.post("/peticion_client")
+    return Response(None, status=201, mimetype='application/json')
+
+@concesionario_v1_0_bp.post("/requests")
 @concesionario_v1_0_bp.input(schema=PeticionSchema)
-@concesionario_v1_0_bp.output(schema=PeticionSchema(many=True))
 def peticion_cliente(data):
     """
     Registrar peticion de un cliente
     :return:
     """
     requests.add_peticion(data['cliente_id'], data['modelo_id'])
+    return Response(None, status=201, mimetype='application/json')
 
 @concesionario_v1_0_bp.get("/requets")
 @concesionario_v1_0_bp.output(schema=PeticionSchema(many=True))
