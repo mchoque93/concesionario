@@ -4,9 +4,10 @@ from typing import List, TYPE_CHECKING, Optional
 if TYPE_CHECKING:
     from app.models import models
 
+
 class AbstractRepository:
     @abstractmethod
-    def add(self, data):
+    def add(self, object):
         raise NotImplemented
 
     @abstractmethod
@@ -18,6 +19,5 @@ class AbstractRepository:
         raise NotImplemented
 
     @abstractmethod
-    def register_cliente(self, importe_disponible:float, nombre:str):
+    def delete(self, object):
         raise NotImplemented
-

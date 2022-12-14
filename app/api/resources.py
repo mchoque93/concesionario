@@ -37,7 +37,7 @@ def register_client(data):
     Registrar cliente
     :return:
     """
-    register_cliente.register_cliente(importe_disponible=data['importe_disponible'], nombre=data['nombre'])
+    register_cliente(importe_disponible=data['importe_disponible'], nombre=data['nombre'])
     return Response(None, status=201, mimetype='application/json')
 
 
@@ -60,7 +60,7 @@ def register_car(data):
     Registrar coches
     :return:
     """
-    register_coche.register_car(estado=data['estado'], matricula=data['matricula'], precio=data['precio'],
+    register_coche(estado=data['estado'], matricula=data['matricula'], precio=data['precio'],
                                 nombre=data['modelo']['nombre'], marca=data['modelo']['marca'])
     return Response(None, status=201, mimetype='application/json')
 
@@ -84,10 +84,9 @@ def buy_car(data, car_id):
     Comprar un coche por un cliente
     :return:
     """
-    buy_car_service.buy_a_car(cliente_id=data['cliente_id'], coche_id=car_id,
-                             importe_abonado=data['importe_abonado'])
-
+    buy_car_service(cliente_id=data['cliente_id'], coche_id=car_id)
     return Response(None, status=201, mimetype='application/json')
+
 
 @concesionario_v1_0_bp.post("/requests")
 @concesionario_v1_0_bp.input(schema=PeticionSchema)
@@ -96,7 +95,7 @@ def peticion_cliente(data):
     Registrar peticion de un cliente
     :return:
     """
-    requests.add_peticion(data['cliente_id'], data['modelo_id'])
+    requests(data['cliente_id'], data['modelo_id'])
     return Response(None, status=201, mimetype='application/json')
 
 @concesionario_v1_0_bp.get("/requets")
