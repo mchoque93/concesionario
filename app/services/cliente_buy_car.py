@@ -9,7 +9,10 @@ class BuyCar:
 
     def __call__(self, coche_id: int, cliente_id: int):
         coche_vendido = self.repositorio_coche.get_by_id(id=coche_id)
-        coche_vendido.estado = Estado.VENDIDO
+        if coche_vendido.estado == Estado.VENDIDO:
+            raise ValueError("El coche ya esta vendido")
+        else:
+            coche_vendido.estado = Estado.VENDIDO
         comprador = self.repositorio_cliente.get_by_id(id=cliente_id)
         comprador.importe_disponible -= coche_vendido.precio
         if comprador.importe_disponible <0:
