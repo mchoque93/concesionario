@@ -1,0 +1,35 @@
+version: '3.4'
+
+services:
+  postgres:
+    container_name: concesionario-postgres
+    image: postgres:13-bullseye
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=pass
+      - POSTGRES_USER=user
+      - POSTGRES_DB=concesionario
+      - CONN_MAX_AGE=60
+    ports:
+      - "5432:5432"
+    networks:
+      - concesionario-network
+
+  concesionario:
+    container_name: concesionario
+    image: concesionario:latest
+    ports:
+      - "5000:5000"
+    networks:
+      - concesionario-network
+    environment:
+      - APP_SETTINGS_MODULE=config.DockerConfig
+
+
+
+networks:
+  concesionario-network: { }
+
+volumes:
+  postgres_data: { }

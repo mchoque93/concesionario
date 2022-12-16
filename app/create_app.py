@@ -6,7 +6,7 @@ from app.infrastructure.orm import start_mappers
 from database import db
 from app.api.resources import concesionario_v1_0_bp
 
-settings= os.getenv('APP_SETTINGS_MODULE')
+settings= os.getenv('APP_SETTINGS_MODULE', "config.DefaultConfig")
 
 
 def create_app(settings_module=settings):
