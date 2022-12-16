@@ -15,7 +15,7 @@ jobs:
       - name: Check format
         run: black --check .
       - name: Check Linting
-        run: flake8 --ignore E501
+        run: flake8 app/ --ignore E501
       - name: Unit tests
         run: pytest tests/unit
       - name: Integration tests
