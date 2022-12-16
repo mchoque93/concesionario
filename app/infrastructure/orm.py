@@ -24,8 +24,8 @@ modelo = Table("modelo",
 transaccion = Table("transaccion",
                     metadata,
                     Column("id", Integer, primary_key=True, autoincrement=True),
-                    Column("coche_id", String, ForeignKey("coche.id")),
-                    Column("cliente_id", String, ForeignKey("cliente.id")),
+                    Column("coche_id", Integer, ForeignKey("coche.id")),
+                    Column("cliente_id", Integer, ForeignKey("cliente.id")),
                     Column("importe_abonado", Float),
                     )
 
@@ -38,8 +38,8 @@ cliente = Table("cliente",
 peticion = Table("peticion",
                  metadata,
                  Column("id", Integer, primary_key=True, autoincrement=True),
-                 Column("cliente_id", String, ForeignKey("cliente.id")),
-                 Column("modelo_id", String, ForeignKey("modelo.id"))
+                 Column("cliente_id", Integer, ForeignKey("cliente.id")),
+                 Column("modelo_id", Integer, ForeignKey("modelo.id"))
                  )
 
 def start_mappers():
