@@ -1,6 +1,7 @@
 from flask_marshmallow import Schema
 from marshmallow import fields
 
+
 class ClienteSchema(Schema):
     id = fields.Integer(dump_only=True)
     importe_disponible = fields.Integer(required=False)
@@ -8,16 +9,21 @@ class ClienteSchema(Schema):
     transacciones = fields.String(required=False, many=True)
     peticiones = fields.String(required=False, many=True)
 
+
 class InputClienteSchema(Schema):
     importe_disponible = fields.Integer(required=False)
     nombre = fields.String(required=False)
+
 
 class ModeloSchema(Schema):
     id = fields.Integer(dump_only=True)
     nombre = fields.String(required=False)
     marca = fields.String(required=False)
 
-modelo_schema=ModeloSchema()
+
+modelo_schema = ModeloSchema()
+
+
 class CocheSchema(Schema):
     id = fields.Integer(dump_only=True)
     estado = fields.Integer(required=False)
@@ -25,9 +31,11 @@ class CocheSchema(Schema):
     precio = fields.Integer(required=False)
     modelo = fields.Nested(ModeloSchema)
 
+
 class BuyerSchema(Schema):
     cliente_id = fields.Integer(required=False)
     importe_abonado = fields.Integer(required=False)
+
 
 class TransaccionSchema(Schema):
     id = fields.Integer(dump_only=True)
@@ -35,7 +43,7 @@ class TransaccionSchema(Schema):
     cliente = fields.Nested(ClienteSchema)
     importe_abonado = fields.Integer(required=False)
 
+
 class PeticionSchema(Schema):
     cliente_id = fields.Integer(required=False)
     modelo_id = fields.Integer(required=False)
-

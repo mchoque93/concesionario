@@ -13,7 +13,6 @@ from app.services.request_peticiones import RequestPeticion
 
 
 class TestBuyACar:
-
     @pytest.fixture
     def repository_coche(self):
         return MagicMock()
@@ -27,12 +26,24 @@ class TestBuyACar:
         return MagicMock()
 
     @pytest.fixture
-    def service_buy_a_car(self, repository_coche, repository_cliente, repository_transacciones):
+    def service_buy_a_car(
+        self, repository_coche, repository_cliente, repository_transacciones
+    ):
         return BuyCar(repository_coche, repository_cliente, repository_transacciones)
 
-    def test_fill_transacciones(self, service_buy_a_car, repository_coche, repository_cliente,
-                                repository_transacciones):
-        coche = Coche(estado=Estado.DISPONIBLE, matricula="aa", precio=1_000, modelo=Modelo(nombre="bb", marca="dd"))
+    def test_fill_transacciones(
+        self,
+        service_buy_a_car,
+        repository_coche,
+        repository_cliente,
+        repository_transacciones,
+    ):
+        coche = Coche(
+            estado=Estado.DISPONIBLE,
+            matricula="aa",
+            precio=1_000,
+            modelo=Modelo(nombre="bb", marca="dd"),
+        )
         cliente = Cliente(importe_disponible=2_000, nombre="Nilo")
         transaccion = Transaccion(coche=coche, cliente=cliente, importe_abonado=1_000)
 
@@ -48,8 +59,15 @@ class TestBuyACar:
         assert coche.estado == Estado.VENDIDO
         assert cliente.importe_disponible == 1_000
 
-    def test_buy_a_car_with_no_money(self, service_buy_a_car, repository_coche, repository_cliente):
-        coche = Coche(estado=Estado.DISPONIBLE, matricula="aa", precio=1_000, modelo=Modelo(nombre="bb", marca="dd"))
+    def test_buy_a_car_with_no_money(
+        self, service_buy_a_car, repository_coche, repository_cliente
+    ):
+        coche = Coche(
+            estado=Estado.DISPONIBLE,
+            matricula="aa",
+            precio=1_000,
+            modelo=Modelo(nombre="bb", marca="dd"),
+        )
         cliente = Cliente(importe_disponible=100, nombre="Nilo")
 
         repository_coche.get_by_id.return_value = coche
@@ -58,8 +76,18 @@ class TestBuyACar:
         with pytest.raises(Exception):
             service_buy_a_car(1, 2)
 
-    def test_buy_a_car_already_saled(self, service_buy_a_car, repository_coche, repository_cliente,):
-        coche = Coche(estado=Estado.VENDIDO, matricula="aa", precio=1_000, modelo=Modelo(nombre="bb", marca="dd"))
+    def test_buy_a_car_already_saled(
+        self,
+        service_buy_a_car,
+        repository_coche,
+        repository_cliente,
+    ):
+        coche = Coche(
+            estado=Estado.VENDIDO,
+            matricula="aa",
+            precio=1_000,
+            modelo=Modelo(nombre="bb", marca="dd"),
+        )
         cliente = Cliente(importe_disponible=100, nombre="Nilo")
 
         repository_coche.get_by_id.return_value = coche
@@ -67,5 +95,3 @@ class TestBuyACar:
 
         with pytest.raises(Exception):
             service_buy_a_car(1, 2)
-
-

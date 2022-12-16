@@ -16,11 +16,13 @@ class Coche:
     precio: float
     modelo: "Modelo"
 
+
 @dataclass
 class Modelo:
     id: int = field(init=False)
     nombre: str
     marca: str
+
 
 @dataclass
 class Transaccion:
@@ -29,18 +31,18 @@ class Transaccion:
     cliente: "Cliente"
     importe_abonado: float
 
+
 @dataclass
 class Cliente:
     id: int = field(init=False)
     importe_disponible: int
     nombre: str
     transacciones: List["Transaccion"] = field(default_factory=list)
-    peticiones: List["Peticion"] =field(default_factory=list)
+    peticiones: List["Peticion"] = field(default_factory=list)
+
 
 @dataclass
 class Peticion:
     id: int = field(init=False)
     cliente: "Cliente"
     modelo: "Modelo"
-
-

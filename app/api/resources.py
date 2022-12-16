@@ -1,11 +1,14 @@
-import os
-
 from apiflask import APIBlueprint
-from flask import request, Blueprint, Response
-from flask_restful import Api, Resource
+from flask import Response
 
-from app.api.scheme import ClienteSchema, InputClienteSchema, CocheSchema, BuyerSchema, TransaccionSchema, \
-    PeticionSchema
+from app.api.scheme import (
+    ClienteSchema,
+    InputClienteSchema,
+    CocheSchema,
+    BuyerSchema,
+    TransaccionSchema,
+    PeticionSchema,
+)
 from app.infrastructure.sqlalchemy_repository import SQLRepository
 from app.models.models import Cliente, Modelo, Coche, Transaccion, Peticion
 from app.services.cliente_buy_car import BuyCar
@@ -13,7 +16,9 @@ from app.services.register_car import RegisterCar
 from app.services.register_cliente import RegisterCliente
 from app.services.request_peticiones import RequestPeticion
 
-concesionario_v1_0_bp = APIBlueprint('concesionario_v1_0_bp', __name__, url_prefix='/concesionario')
+concesionario_v1_0_bp = APIBlueprint(
+    "concesionario_v1_0_bp", __name__, url_prefix="/concesionario"
+)
 
 coche_schema = CocheSchema()
 cliente_schema = ClienteSchema()
@@ -30,6 +35,7 @@ register_coche = RegisterCar(repository_coche)
 buy_car_service = BuyCar(repository_coche, repository, repository_transaccion)
 requests = RequestPeticion(repository_peticion, repository, repository_modelo)
 
+
 @concesionario_v1_0_bp.post("/customers")
 @concesionario_v1_0_bp.input(schema=InputClienteSchema)
 def register_client(data):
@@ -37,8 +43,10 @@ def register_client(data):
     Registrar cliente
     :return:
     """
-    register_cliente(importe_disponible=data['importe_disponible'], nombre=data['nombre'])
-    return Response(None, status=201, mimetype='application/json')
+    register_cliente(
+        importe_disponible=data["importe_disponible"], nombre=data["nombre"]
+    )
+    return Response(None, status=201, mimetype="application/json")
 
 
 @concesionario_v1_0_bp.get("/customers")
@@ -60,9 +68,14 @@ def register_car(data):
     Registrar coches
     :return:
     """
-    register_coche(estado=data['estado'], matricula=data['matricula'], precio=data['precio'],
-                                nombre=data['modelo']['nombre'], marca=data['modelo']['marca'])
-    return Response(None, status=201, mimetype='application/json')
+    register_coche(
+        estado=data["estado"],
+        matricula=data["matricula"],
+        precio=data["precio"],
+        nombre=data["modelo"]["nombre"],
+        marca=data["modelo"]["marca"],
+    )
+    return Response(None, status=201, mimetype="application/json")
 
 
 @concesionario_v1_0_bp.get("/cars")
@@ -84,8 +97,8 @@ def buy_car(data, car_id):
     Comprar un coche por un cliente
     :return:
     """
-    buy_car_service(cliente_id=data['cliente_id'], coche_id=car_id)
-    return Response(None, status=201, mimetype='application/json')
+    buy_car_service(cliente_id=data["cliente_id"], coche_id=car_id)
+    return Response(None, status=201, mimetype="application/json")
 
 
 @concesionario_v1_0_bp.post("/requests")
@@ -95,8 +108,9 @@ def peticion_cliente(data):
     Registrar peticion de un cliente
     :return:
     """
-    requests(data['cliente_id'], data['modelo_id'])
-    return Response(None, status=201, mimetype='application/json')
+    requests(data["cliente_id"], data["modelo_id"])
+    return Response(None, status=201, mimetype="application/json")
+
 
 @concesionario_v1_0_bp.get("/requets")
 @concesionario_v1_0_bp.output(schema=PeticionSchema(many=True))
@@ -109,6 +123,7 @@ def get_all_peticiones():
     result = PeticionSchema().dump(peticiones, many=True)
     return result
 
+
 @concesionario_v1_0_bp.get("/transacciones")
 @concesionario_v1_0_bp.output(schema=TransaccionSchema(many=True))
 def get_all_transacciones():
@@ -119,4 +134,3 @@ def get_all_transacciones():
     transacciones = repository_transaccion.get_all()
     result = TransaccionSchema().dump(transacciones, many=True)
     return result
-
