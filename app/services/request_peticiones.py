@@ -1,4 +1,4 @@
-from app.models.models import Coche, Modelo, Estado, Transaccion, Peticion
+from app.models.models import Peticion
 
 
 class RequestPeticion:

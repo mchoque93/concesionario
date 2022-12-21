@@ -1,4 +1,4 @@
-from app.models.models import Coche, Modelo, Estado, Transaccion
+from app.models.models import Estado, Transaccion
 
 
 class BuyCar:
@@ -14,7 +14,12 @@ class BuyCar:
         coche_vendido.estado = Estado.VENDIDO
         comprador = self.repositorio_cliente.get_by_id(id=cliente_id)
         comprador.importe_disponible -= coche_vendido.precio
-        if comprador.importe_disponible <0:
+        if comprador.importe_disponible < 0:
             raise ValueError("El cliente no tiene dinero para comprar el coche")
         self.repositorio_transaccion.add(
-            Transaccion(coche=coche_vendido, cliente=comprador, importe_abonado=coche_vendido.precio))
+            Transaccion(
+                coche=coche_vendido,
+                cliente=comprador,
+                importe_abonado=coche_vendido.precio,
+            )
+        )

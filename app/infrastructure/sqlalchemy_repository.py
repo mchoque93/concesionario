@@ -1,10 +1,8 @@
 from app.infrastructure.abstract_repository import AbstractRepository
-from app.models.models import Cliente
 from app.infrastructure.orm import db
 
 
 class SQLRepository(AbstractRepository):
-
     def __init__(self, clase):
         self.clase = clase
 
